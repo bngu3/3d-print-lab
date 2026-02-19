@@ -3,6 +3,8 @@ import { getAllRequests, updateRequestStatus, getDownloadUrl } from '../api/requ
 import type { PrintRequest } from '../types';
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
 
+const ADMIN_PASSWORD = 'iloveandrew67$';
+
 const PRIORITY_COLORS: Record<string, string> = {
   class: '#ef4444',
   project: '#f59e0b',
@@ -17,12 +19,23 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function AdminPage() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [requests, setRequests] = useState<PrintRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [noteInputs, setNoteInputs] = useState<Record<number, string>>({});
   const [updating, setUpdating] = useState<number | null>(null);
+
+  const handleLogin = () => {
+    if (passwordInput === ADMIN_PASSWORD) {
+      setAuthenticated(true);
+    } else {
+      setPasswordError('Incorrect password.');
+    }
+  };
 
   const fetchRequests = async () => {
     try {
@@ -36,8 +49,8 @@ export default function AdminPage() {
   };
 
   useEffect(() => {
-    fetchRequests();
-  }, []);
+    if (authenticated) fetchRequests();
+  }, [authenticated]);
 
   const handleStatusUpdate = async (id: number, status: string) => {
     setUpdating(id);
@@ -50,6 +63,31 @@ export default function AdminPage() {
       setUpdating(null);
     }
   };
+
+  if (!authenticated) {
+    return (
+      <div className="form-container" style={{ maxWidth: '400px', marginTop: '4rem' }}>
+        <div className="form-header">
+          <h1>🔒 Admin Access</h1>
+          <p>Enter the lab assistant password to continue.</p>
+        </div>
+        <div className="form-group">
+          <label>Password</label>
+          <input
+            type="password"
+            placeholder="Enter password..."
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
+        </div>
+        {passwordError && <div className="error-message">{passwordError}</div>}
+        <button className="btn-primary" style={{ marginTop: '1rem', width: '100%' }} onClick={handleLogin}>
+          Enter
+        </button>
+      </div>
+    );
+  }
 
   const filtered = filterStatus === 'all'
     ? requests
@@ -86,16 +124,10 @@ export default function AdminPage() {
           <div key={req.id} className="request-card">
             <div className="request-card-header">
               <div className="request-meta">
-                <span
-                  className="type-badge"
-                  style={{ backgroundColor: PRIORITY_COLORS[req.request_type] }}
-                >
+                <span className="type-badge" style={{ backgroundColor: PRIORITY_COLORS[req.request_type] }}>
                   {REQUEST_TYPE_LABELS[req.request_type]}
                 </span>
-                <span
-                  className="status-badge-sm"
-                  style={{ backgroundColor: STATUS_COLORS[req.status] }}
-                >
+                <span className="status-badge-sm" style={{ backgroundColor: STATUS_COLORS[req.status] }}>
                   {STATUS_LABELS[req.status]}
                 </span>
               </div>
@@ -113,45 +145,25 @@ export default function AdminPage() {
             </div>
 
             <div className="request-actions">
-              <a
-                href={getDownloadUrl(req.id)}
-                className="btn-download"
-                download
-              >
+              <a href={getDownloadUrl(req.id)} className="btn-download" download>
                 ⬇ Download File
               </a>
-
               <div className="note-input-row">
                 <input
                   type="text"
                   placeholder="Add a note (optional)..."
                   value={noteInputs[req.id] ?? req.admin_notes ?? ''}
-                  onChange={(e) =>
-                    setNoteInputs((prev) => ({ ...prev, [req.id]: e.target.value }))
-                  }
+                  onChange={(e) => setNoteInputs((prev) => ({ ...prev, [req.id]: e.target.value }))}
                 />
               </div>
-
               <div className="action-buttons">
-                <button
-                  className="btn-approve"
-                  onClick={() => handleStatusUpdate(req.id, 'approved')}
-                  disabled={updating === req.id || req.status === 'approved'}
-                >
+                <button className="btn-approve" onClick={() => handleStatusUpdate(req.id, 'approved')} disabled={updating === req.id || req.status === 'approved'}>
                   ✓ Approve
                 </button>
-                <button
-                  className="btn-complete"
-                  onClick={() => handleStatusUpdate(req.id, 'completed')}
-                  disabled={updating === req.id || req.status === 'completed'}
-                >
+                <button className="btn-complete" onClick={() => handleStatusUpdate(req.id, 'completed')} disabled={updating === req.id || req.status === 'completed'}>
                   ✅ Mark Completed
                 </button>
-                <button
-                  className="btn-deny"
-                  onClick={() => handleStatusUpdate(req.id, 'denied')}
-                  disabled={updating === req.id || req.status === 'denied'}
-                >
+                <button className="btn-deny" onClick={() => handleStatusUpdate(req.id, 'denied')} disabled={updating === req.id || req.status === 'denied'}>
                   ✕ Deny
                 </button>
               </div>
