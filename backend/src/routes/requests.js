@@ -1,7 +1,6 @@
 const express = require('express');
-const path = require('path');
 const pool = require('../db/database');
-const { upload, UPLOAD_DIR } = require('../middleware/upload');
+const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 const PRIORITY_MAP = { class: 1, project: 2, personal: 3 };
@@ -14,9 +13,9 @@ router.post('/', upload.single('file'), async (req, res) => {
   const priority = PRIORITY_MAP[request_type];
   try {
     const result = await pool.query(
-      `INSERT INTO print_requests (student_name, requested_date, description, request_type, priority, file_name, file_path)
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [student_name, requested_date, description, request_type, priority, req.file.originalname, req.file.filename]
+      `INSERT INTO print_requests (student_name, requested_date, description, request_type, priority, file_name, file_data)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, student_name, requested_date, description, request_type, priority, status, file_name, created_at`,
+      [student_name, requested_date, description, request_type, priority, req.file.originalname, req.file.buffer]
     );
     res.status(201).json({ message: 'Request submitted!', request: result.rows[0] });
   } catch (err) {
@@ -27,7 +26,9 @@ router.post('/', upload.single('file'), async (req, res) => {
 
 router.get('/', async (_req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM print_requests ORDER BY priority ASC, created_at ASC');
+    const result = await pool.query(
+      'SELECT id, student_name, requested_date, description, request_type, priority, status, file_name, admin_notes, created_at FROM print_requests ORDER BY priority ASC, created_at ASC'
+    );
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: 'Internal server error.' });
@@ -36,7 +37,10 @@ router.get('/', async (_req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM print_requests WHERE id = $1', [req.params.id]);
+    const result = await pool.query(
+      'SELECT id, student_name, requested_date, description, request_type, priority, status, file_name, admin_notes, created_at FROM print_requests WHERE id = $1',
+      [req.params.id]
+    );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Request not found.' });
     res.json(result.rows[0]);
   } catch (err) {
@@ -50,7 +54,7 @@ router.patch('/:id/status', async (req, res) => {
   if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status.' });
   try {
     const result = await pool.query(
-      'UPDATE print_requests SET status = $1, admin_notes = $2 WHERE id = $3 RETURNING *',
+      'UPDATE print_requests SET status = $1, admin_notes = $2 WHERE id = $3 RETURNING id, student_name, requested_date, description, request_type, priority, status, file_name, admin_notes, created_at',
       [status, admin_notes ?? null, req.params.id]
     );
     res.json({ message: 'Status updated.', request: result.rows[0] });
@@ -61,9 +65,14 @@ router.patch('/:id/status', async (req, res) => {
 
 router.get('/:id/download', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM print_requests WHERE id = $1', [req.params.id]);
+    const result = await pool.query(
+      'SELECT file_name, file_data FROM print_requests WHERE id = $1',
+      [req.params.id]
+    );
     if (result.rows.length === 0) return res.status(404).json({ error: 'Request not found.' });
-    res.download(path.join(UPLOAD_DIR, result.rows[0].file_path), result.rows[0].file_name);
+    const { file_name, file_data } = result.rows[0];
+    res.setHeader('Content-Disposition', `attachment; filename="${file_name}"`);
+    res.send(file_data);
   } catch (err) {
     res.status(500).json({ error: 'Internal server error.' });
   }

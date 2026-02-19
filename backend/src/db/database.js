@@ -15,7 +15,7 @@ pool.query(`
     priority INTEGER NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     file_name TEXT NOT NULL,
-    file_path TEXT NOT NULL,
+    file_data BYTEA,
     admin_notes TEXT,
     created_at TIMESTAMP DEFAULT NOW()
   )
