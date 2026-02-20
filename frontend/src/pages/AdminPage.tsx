@@ -96,7 +96,7 @@ export default function AdminPage() {
   return (
     <div className="admin-container">
       <div className="admin-header">
-        <h1>🖨️ Admin Dashboard</h1>
+        <h1>Admin Dashboard</h1>
         <p>{requests.length} total requests</p>
       </div>
 
