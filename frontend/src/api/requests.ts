@@ -1,6 +1,6 @@
 import type{ PrintRequest } from '../types';
 
-const BASE_URL = '3d-print-lab-production.up.railway.app';
+const BASE_URL = 'https://3d-print-lab-production.up.railway.app/api';
 
 export async function submitRequest(formData: FormData): Promise<PrintRequest> {
   const res = await fetch(`${BASE_URL}/requests`, {
