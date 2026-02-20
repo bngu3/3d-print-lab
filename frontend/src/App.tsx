@@ -35,7 +35,7 @@ export default function App() {
         </main>
 
         <footer className="footer">
-          <p>SJSU FabLab 3D Printing Lab — Request Management System</p>
+          <p>SJSU FabLab 3D Printing — Request Management System</p>
         </footer>
       </div>
     </BrowserRouter>

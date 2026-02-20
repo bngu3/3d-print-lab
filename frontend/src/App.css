@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap');
 
-/* ─── Reset & Base ─────────────────────────────────── */
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
@@ -29,11 +29,10 @@ body {
   line-height: 1.6;
 }
 
-/* ─── Layout ────────────────────────────────────────── */
+
 .app { display: flex; flex-direction: column; min-height: 100vh; }
 .main-content { flex: 1; padding: 2rem 1rem; }
 
-/* ─── Navbar ────────────────────────────────────────── */
 .navbar {
   display: flex;
   align-items: center;
@@ -74,7 +73,7 @@ body {
 .admin-link { border: 1px solid var(--border); }
 .admin-link.active { border-color: var(--accent); }
 
-/* ─── Footer ────────────────────────────────────────── */
+
 .footer {
   text-align: center;
   padding: 1.5rem;
@@ -83,7 +82,6 @@ body {
   border-top: 1px solid var(--border);
 }
 
-/* ─── Form Container ────────────────────────────────── */
 .form-container {
   max-width: 640px;
   margin: 0 auto;
@@ -93,7 +91,6 @@ body {
 .form-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
 .form-header p { color: var(--text-muted); margin-top: 0.4rem; }
 
-/* ─── Form ──────────────────────────────────────────── */
 .print-form { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
@@ -135,7 +132,6 @@ body {
 .file-upload-area input[type="file"] { color: var(--text-muted); font-size: 0.9rem; width: 100%; }
 .file-selected { margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent); font-family: var(--font-mono); }
 
-/* ─── Buttons ───────────────────────────────────────── */
 .btn-primary {
   background: var(--accent);
   color: white;
@@ -168,7 +164,6 @@ body {
 
 .btn-secondary:hover { background: var(--border); }
 
-/* ─── Error ─────────────────────────────────────────── */
 .error-message {
   background: rgba(239, 68, 68, 0.12);
   border: 1px solid rgba(239, 68, 68, 0.3);
@@ -178,7 +173,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* ─── Success Card ──────────────────────────────────── */
 .success-card {
   max-width: 500px;
   margin: 2rem auto;
@@ -227,7 +221,6 @@ body {
 
 .hint { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* ─── Status Page ───────────────────────────────────── */
 .lookup-bar {
   display: flex;
   gap: 0.75rem;
@@ -280,7 +273,6 @@ body {
 
 .admin-notes p { margin-top: 0.4rem; color: var(--text-muted); }
 
-/* ─── Admin Dashboard ───────────────────────────────── */
 .admin-container { max-width: 900px; margin: 0 auto; }
 
 .admin-header { margin-bottom: 1.5rem; }
@@ -431,6 +423,5 @@ body {
   cursor: not-allowed;
 }
 
-/* ─── Misc ──────────────────────────────────────────── */
 .loading-text { color: var(--text-muted); text-align: center; padding: 2rem; }
 .empty-state { color: var(--text-muted); text-align: center; padding: 3rem; border: 1px dashed var(--border); border-radius: var(--radius); }

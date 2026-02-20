@@ -68,7 +68,7 @@ export default function AdminPage() {
     return (
       <div className="form-container" style={{ maxWidth: '400px', marginTop: '4rem' }}>
         <div className="form-header">
-          <h1>🔒 Admin Access</h1>
+          <h1>Admin Access Required</h1>
           <p>Enter the lab assistant password to continue.</p>
         </div>
         <div className="form-group">
