@@ -4,14 +4,14 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0f0f12;
-  --surface: #18181f;
-  --surface2: #222230;
-  --border: #2e2e3e;
-  --text: #e8e8f0;
-  --text-muted: #7c7c9a;
-  --accent: #7c6af7;
-  --accent-hover: #9b8bff;
+  --bg: #1E1E1E;
+  --surface: #2A2A2A;
+  --surface2: #333333;
+  --border: #3a3a3a;
+  --text: #F4F4F4;
+  --text-muted: #BDBDBD;
+  --accent: #F58220;
+  --accent-hover: #2D9CDB;
   --red: #ef4444;
   --yellow: #f59e0b;
   --green: #10b981;
