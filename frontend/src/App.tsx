@@ -11,7 +11,7 @@ export default function App() {
         <nav className="navbar">
           <div className="nav-brand">
             <span className="nav-logo">🖨️</span>
-            <span className="nav-title">3D Print Lab</span>
+            <span className="nav-title">SJSU FabLab 3D-Printing</span>
           </div>
           <div className="nav-links">
             <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
@@ -35,7 +35,7 @@ export default function App() {
         </main>
 
         <footer className="footer">
-          <p>School 3D Printing Lab — Request Management System</p>
+          <p>SJSU FabLab 3D Printing Lab — Request Management System</p>
         </footer>
       </div>
     </BrowserRouter>
