@@ -3,7 +3,7 @@ import { getAllRequests, updateRequestStatus, getDownloadUrl } from '../api/requ
 import type { PrintRequest } from '../types';
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
 
-const ADMIN_PASSWORD = 'iloveandrew67$';
+const ADMIN_PASSWORD = 'fabl@bpr1nter94!';
 
 const PRIORITY_COLORS: Record<string, string> = {
   class: '#ef4444',
