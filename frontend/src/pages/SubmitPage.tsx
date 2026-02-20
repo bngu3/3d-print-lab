@@ -3,9 +3,9 @@ import type { FormEvent } from 'react';
 import type { PrintRequest } from '../types';
 import { submitRequest } from '../api/requests';
 
-
 export default function SubmitPage() {
   const [studentName, setStudentName] = useState('');
+  const [email, setEmail] = useState('');
   const [requestedDate, setRequestedDate] = useState('');
   const [description, setDescription] = useState('');
   const [requestType, setRequestType] = useState<'class' | 'project' | 'personal'>('class');
@@ -19,12 +19,13 @@ export default function SubmitPage() {
     setError('');
 
     if (!file) {
-      setError('Please upload a .gcode or .mf3 file.');
+      setError('Please upload a .stl file.');
       return;
     }
 
     const formData = new FormData();
     formData.append('student_name', studentName);
+    formData.append('email', email);
     formData.append('requested_date', requestedDate);
     formData.append('description', description);
     formData.append('request_type', requestType);
@@ -82,6 +83,18 @@ export default function SubmitPage() {
         </div>
 
         <div className="form-group">
+          <label htmlFor="email">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            placeholder="Your school email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="form-group">
           <label htmlFor="requestedDate">Requested Print Date</label>
           <input
             id="requestedDate"
@@ -112,20 +125,20 @@ export default function SubmitPage() {
             onChange={(e) => setRequestType(e.target.value as typeof requestType)}
             required
           >
-            <option value="class">🔴 Class-Related (Highest Priority)</option>
-            <option value="project">🟡 Project-Based</option>
-            <option value="personal">🟢 Personal (Lowest Priority)</option>
+            <option value="class"> Class-Related (Highest Priority)</option>
+            <option value="project"> Project-Based</option>
+            <option value="personal"> Personal (Lowest Priority)</option>
           </select>
           <span className="field-hint">Class-related requests are always prioritized first.</span>
         </div>
 
         <div className="form-group">
-          <label htmlFor="file">Print File (.gcode or .mf3)</label>
+          <label htmlFor="file">Print File (.stl)</label>
           <div className="file-upload-area">
             <input
               id="file"
               type="file"
-              accept=".gcode,.mf3"
+              accept=".stl"
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               required
             />
