@@ -44,7 +44,7 @@ export default function StatusPage() {
       <div className="lookup-bar">
         <input
           type="number"
-          placeholder="Enter your Request ID (e.g. 42)"
+          placeholder="Enter your Request ID (e.g. 67)"
           value={requestId}
           onChange={(e) => setRequestId(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleLookup()}
