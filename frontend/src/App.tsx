@@ -10,8 +10,8 @@ export default function App() {
       <div className="app">
         <nav className="navbar">
           <div className="nav-brand">
-            <span className="nav-logo">🖨️</span>
-            <span className="nav-title">SJSU FabLab 3D-Printing</span>
+            <img src="/FabLab.png" alt="FabLab Logo" style={{ height: '36px', width: 'auto' }} />
+            <span className="nav-title">3D Print Lab</span>
           </div>
           <div className="nav-links">
             <NavLink to="/" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
