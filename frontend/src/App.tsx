@@ -10,7 +10,7 @@ export default function App() {
       <div className="app">
         <nav className="navbar">
           <div className="nav-brand">
-            <img src="/FabLab.png" alt="FabLab Logo" style={{ height: '64px', width: 'auto' }} />
+            <img src="/FabLab.png" alt="FabLab Logo" style={{ height: '36px', width: 'auto', transform: 'scale(1.5)', transformOrigin: 'left center' }} />
             <span className="nav-title">3D Print Lab</span>
           </div>
           <div className="nav-links">
