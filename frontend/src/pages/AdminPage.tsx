@@ -136,17 +136,18 @@ export default function AdminPage() {
 
             <div className="request-body">
               <h3>{req.student_name}</h3>
+              <p className="request-description"> {req.email}</p>
               <p className="request-description">{req.description}</p>
               <div className="request-details">
-                <span>📅 {req.requested_date}</span>
-                <span>🕐 Submitted: {new Date(req.created_at).toLocaleString()}</span>
-                <span>📁 {req.file_name}</span>
+                <span>Requested Date: {req.requested_date}</span>
+                <span>Time Submitted: {new Date(req.created_at).toLocaleString()}</span>
+                <span>File {req.file_name}</span>
               </div>
             </div>
 
             <div className="request-actions">
               <a href={getDownloadUrl(req.id)} className="btn-download" download>
-                ⬇ Download File
+                Download File
               </a>
               <div className="note-input-row">
                 <input
@@ -158,10 +159,10 @@ export default function AdminPage() {
               </div>
               <div className="action-buttons">
                 <button className="btn-approve" onClick={() => handleStatusUpdate(req.id, 'approved')} disabled={updating === req.id || req.status === 'approved'}>
-                  ✓ Approve
+                  Approve
                 </button>
                 <button className="btn-complete" onClick={() => handleStatusUpdate(req.id, 'completed')} disabled={updating === req.id || req.status === 'completed'}>
-                  ✅ Mark Completed
+                  Mark Completed
                 </button>
                 <button className="btn-deny" onClick={() => handleStatusUpdate(req.id, 'denied')} disabled={updating === req.id || req.status === 'denied'}>
                   ✕ Deny

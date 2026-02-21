@@ -69,6 +69,7 @@ export default function StatusPage() {
 
           <div className="info-block">
             <p><span>Student:</span> {request.student_name}</p>
+            <p><span>Email:</span> {request.email}</p>
             <p><span>Type:</span> {REQUEST_TYPE_LABELS[request.request_type]}</p>
             <p><span>Requested Date:</span> {request.requested_date}</p>
             <p><span>Submitted:</span> {new Date(request.created_at).toLocaleString()}</p>
