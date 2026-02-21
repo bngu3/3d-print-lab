@@ -1,21 +1,15 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 async function sendConfirmationEmail(to, request) {
-  const mailOptions = {
-    from: `"3D Print Lab" <${process.env.EMAIL_USER}>`,
+  await resend.emails.send({
+    from: 'FabLab <onboarding@resend.dev>',
     to,
     subject: `Print Request Confirmed — Request #${request.id}`,
     html: `
       <div style="font-family: Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #1E1E1E; color: #F4F4F4; border-radius: 12px;">
-        <h1 style="color: #F58220;">Print Request Received!</h1>
+        <h1 style="color: #F58220;"> Print Request Received!</h1>
         <p>Your 3D print request has been submitted and is <strong>pending review</strong> by the lab assistant.</p>
         
         <div style="background: #2A2A2A; padding: 16px; border-radius: 8px; margin: 20px 0;">
@@ -32,9 +26,7 @@ async function sendConfirmationEmail(to, request) {
         <p style="color: #BDBDBD; font-size: 0.85rem; margin-top: 30px;">School FabLab — 3D Print Lab Request System</p>
       </div>
     `,
-  };
-
-  await transporter.sendMail(mailOptions);
+  });
 }
 
 module.exports = { sendConfirmationEmail };
