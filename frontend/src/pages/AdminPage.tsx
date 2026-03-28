@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getAllRequests, updateRequestStatus, getDownloadUrl } from '../api/requests';
+import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, getDownloadUrl } from '../api/requests';
 import type { PrintRequest } from '../types';
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
 
-const ADMIN_PASSWORD = 'fabl@bpr1nter94!';
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
 const PRIORITY_COLORS: Record<string, string> = {
   class: '#ef4444',
@@ -23,10 +23,12 @@ export default function AdminPage() {
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [requests, setRequests] = useState<PrintRequest[]>([]);
+  const [archivedRequests, setArchivedRequests] = useState<PrintRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
-  const [noteInputs, setNoteInputs] = useState<Record<number, string>>({});
+  const [showArchived, setShowArchived] = useState(false);
+  const [noteInputs, setNoteInputs] = useState<Record<string, string>>({});
   const [updating, setUpdating] = useState<number | null>(null);
 
   const handleLogin = () => {
@@ -48,14 +50,26 @@ export default function AdminPage() {
     }
   };
 
+  const fetchArchived = async () => {
+    try {
+      const data = await getArchivedRequests();
+      setArchivedRequests(data);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load archived requests.');
+    }
+  };
+
   useEffect(() => {
-    if (authenticated) fetchRequests();
+    if (authenticated) {
+      fetchRequests();
+      fetchArchived();
+    }
   }, [authenticated]);
 
-  const handleStatusUpdate = async (id: number, status: string) => {
-    setUpdating(id);
+  const handleStatusUpdate = async (req: PrintRequest, status: string) => {
+    setUpdating(req.id);
     try {
-      const updated = await updateRequestStatus(id, status, noteInputs[id]);
+      const updated = await updateRequestStatus(req.request_code, status, noteInputs[req.request_code]);
       setRequests((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Update failed.');
@@ -64,11 +78,21 @@ export default function AdminPage() {
     }
   };
 
+  const handleArchive = async (req: PrintRequest) => {
+    try {
+      await archiveRequest(req.request_code);
+      setRequests((prev) => prev.filter((r) => r.id !== req.id));
+      fetchArchived();
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Archive failed.');
+    }
+  };
+
   if (!authenticated) {
     return (
       <div className="form-container" style={{ maxWidth: '400px', marginTop: '4rem' }}>
         <div className="form-header">
-          <h1>Admin Access Required</h1>
+          <h1>🔒 Admin Access</h1>
           <p>Enter the lab assistant password to continue.</p>
         </div>
         <div className="form-group">
@@ -93,34 +117,53 @@ export default function AdminPage() {
     ? requests
     : requests.filter((r) => r.status === filterStatus);
 
+  const displayList = showArchived ? archivedRequests : filtered;
+
   return (
     <div className="admin-container">
       <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>{requests.length} total requests</p>
+        <h1>🖨️ Admin Dashboard</h1>
+        <p>{requests.length} active requests · {archivedRequests.length} archived</p>
       </div>
 
       <div className="admin-toolbar">
-        <label>Filter by status:</label>
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-          <option value="all">All</option>
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="denied">Denied</option>
-          <option value="completed">Completed</option>
-        </select>
-        <button className="btn-secondary" onClick={fetchRequests}>↻ Refresh</button>
+        <button
+          className={!showArchived ? 'btn-primary' : 'btn-secondary'}
+          onClick={() => setShowArchived(false)}
+        >
+          Active
+        </button>
+        <button
+          className={showArchived ? 'btn-primary' : 'btn-secondary'}
+          onClick={() => setShowArchived(true)}
+        >
+          Archived
+        </button>
+
+        {!showArchived && (
+          <>
+            <label>Filter:</label>
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="approved">Approved</option>
+              <option value="denied">Denied</option>
+              <option value="completed">Completed</option>
+            </select>
+          </>
+        )}
+        <button className="btn-secondary" onClick={() => { fetchRequests(); fetchArchived(); }}>↻ Refresh</button>
       </div>
 
       {loading && <p className="loading-text">Loading requests...</p>}
       {error && <div className="error-message">{error}</div>}
 
-      {!loading && filtered.length === 0 && (
-        <div className="empty-state">No requests found.</div>
+      {!loading && displayList.length === 0 && (
+        <div className="empty-state">{showArchived ? 'No archived requests.' : 'No requests found.'}</div>
       )}
 
       <div className="requests-list">
-        {filtered.map((req) => (
+        {displayList.map((req) => (
           <div key={req.id} className="request-card">
             <div className="request-card-header">
               <div className="request-meta">
@@ -131,44 +174,64 @@ export default function AdminPage() {
                   {STATUS_LABELS[req.status]}
                 </span>
               </div>
-              <span className="request-id">#{req.id}</span>
+              <span className="request-id">{req.request_code}</span>
             </div>
 
             <div className="request-body">
               <h3>{req.student_name}</h3>
-              <p className="request-description"> {req.email}</p>
+              <p style={{ fontSize: '0.85rem', color: '#BDBDBD' }}>📧 {req.email}</p>
               <p className="request-description">{req.description}</p>
               <div className="request-details">
-                <span>Requested Date: {req.requested_date}</span>
-                <span>Time Submitted: {new Date(req.created_at).toLocaleString()}</span>
-                <span>File {req.file_name}</span>
+                <span>📐 {req.print_size}</span>
+                <span>📅 {req.requested_date}</span>
+                <span>🕐 {new Date(req.created_at).toLocaleString()}</span>
+                <span>📁 {req.file_name}</span>
               </div>
             </div>
 
-            <div className="request-actions">
-              <a href={getDownloadUrl(req.id)} className="btn-download" download>
-                Download File
-              </a>
-              <div className="note-input-row">
-                <input
-                  type="text"
-                  placeholder="Add a note (optional)..."
-                  value={noteInputs[req.id] ?? req.admin_notes ?? ''}
-                  onChange={(e) => setNoteInputs((prev) => ({ ...prev, [req.id]: e.target.value }))}
-                />
+            {!showArchived && (
+              <div className="request-actions">
+                <a href={getDownloadUrl(req.request_code)} className="btn-download" download>
+                  ⬇ Download File
+                </a>
+                <div className="note-input-row">
+                  <input
+                    type="text"
+                    placeholder="Add a note (optional)..."
+                    value={noteInputs[req.request_code] ?? req.admin_notes ?? ''}
+                    onChange={(e) => setNoteInputs((prev) => ({ ...prev, [req.request_code]: e.target.value }))}
+                  />
+                </div>
+                <div className="action-buttons">
+                  <button className="btn-approve" onClick={() => handleStatusUpdate(req, 'approved')} disabled={updating === req.id || req.status === 'approved'}>
+                    Approve
+                  </button>
+                  <button className="btn-complete" onClick={() => handleStatusUpdate(req, 'completed')} disabled={updating === req.id || req.status === 'completed'}>
+                    Complete
+                  </button>
+                  <button className="btn-deny" onClick={() => handleStatusUpdate(req, 'denied')} disabled={updating === req.id || req.status === 'denied'}>
+                    ✕ Deny
+                  </button>
+                  <button
+                    style={{ background: 'rgba(100,100,100,0.15)', color: '#BDBDBD', border: '1px solid #3a3a3a', borderRadius: '8px', padding: '0.5rem 1rem', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: '0.85rem', fontWeight: '700' }}
+                    onClick={() => handleArchive(req)}
+                  >
+                    Archive
+                  </button>
+                </div>
               </div>
-              <div className="action-buttons">
-                <button className="btn-approve" onClick={() => handleStatusUpdate(req.id, 'approved')} disabled={updating === req.id || req.status === 'approved'}>
-                  Approve
-                </button>
-                <button className="btn-complete" onClick={() => handleStatusUpdate(req.id, 'completed')} disabled={updating === req.id || req.status === 'completed'}>
-                  Mark Completed
-                </button>
-                <button className="btn-deny" onClick={() => handleStatusUpdate(req.id, 'denied')} disabled={updating === req.id || req.status === 'denied'}>
-                  ✕ Deny
-                </button>
+            )}
+
+            {showArchived && (
+              <div className="request-actions">
+                <a href={getDownloadUrl(req.request_code)} className="btn-download" download>
+                  ⬇ Download File
+                </a>
+                {req.admin_notes && (
+                  <p style={{ fontSize: '0.85rem', color: '#BDBDBD', padding: '0.5rem 0' }}>📝 {req.admin_notes}</p>
+                )}
               </div>
-            </div>
+            )}
           </div>
         ))}
       </div>

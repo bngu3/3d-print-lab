@@ -8,11 +8,18 @@ export default function SubmitPage() {
   const [email, setEmail] = useState('');
   const [requestedDate, setRequestedDate] = useState('');
   const [description, setDescription] = useState('');
+  const [printSize, setPrintSize] = useState('');
   const [requestType, setRequestType] = useState<'class' | 'project' | 'personal'>('class');
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState<PrintRequest | null>(null);
+
+  const validateSize = (size: string) => {
+    const parts = size.split('x').map(Number);
+    if (parts.length !== 3 || parts.some(isNaN)) return false;
+    return parts.every(p => p > 0 && p <= 8);
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -23,11 +30,17 @@ export default function SubmitPage() {
       return;
     }
 
+    if (!validateSize(printSize)) {
+      setError('Invalid print size. Use format LxWxH (e.g. 4x4x4). Max size is 8x8x8.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('student_name', studentName);
     formData.append('email', email);
     formData.append('requested_date', requestedDate);
     formData.append('description', description);
+    formData.append('print_size', printSize);
     formData.append('request_type', requestType);
     formData.append('file', file);
 
@@ -49,12 +62,13 @@ export default function SubmitPage() {
         <h2>Request Submitted!</h2>
         <p>Your print request has been received and is <strong>pending review</strong>.</p>
         <div className="info-block">
-          <p><span>Request ID:</span> <strong>#{submitted.id}</strong></p>
+          <p><span>Request Code:</span> <strong>{submitted.request_code}</strong></p>
           <p><span>Name:</span> {submitted.student_name}</p>
           <p><span>Type:</span> {submitted.request_type}</p>
+          <p><span>Size:</span> {submitted.print_size}</p>
           <p><span>File:</span> {submitted.file_name}</p>
         </div>
-        <p className="hint">Save your Request ID to check your status later.</p>
+        <p className="hint">Save your Request Code to check your status later.</p>
         <button className="btn-secondary" onClick={() => setSubmitted(null)}>
           Submit Another Request
         </button>
@@ -118,6 +132,19 @@ export default function SubmitPage() {
         </div>
 
         <div className="form-group">
+          <label htmlFor="printSize">Print Size (Max 8x8x8 inches)</label>
+          <input
+            id="printSize"
+            type="text"
+            placeholder="e.g. 4x4x4"
+            value={printSize}
+            onChange={(e) => setPrintSize(e.target.value)}
+            required
+          />
+          <span className="field-hint">Format: LengthxWidthxHeight in inches. Maximum size is 8x8x8.</span>
+        </div>
+
+        <div className="form-group">
           <label htmlFor="requestType">Request Type</label>
           <select
             id="requestType"
@@ -129,7 +156,7 @@ export default function SubmitPage() {
             <option value="project"> Project-Based</option>
             <option value="personal"> Personal (Lowest Priority)</option>
           </select>
-          <span className="field-hint">Class-related requests are always prioritized first.</span>
+          <span className="field-hint">Class-related requests are always prioritized first!</span>
         </div>
 
         <div className="form-group">
