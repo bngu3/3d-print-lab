@@ -92,7 +92,7 @@ export default function AdminPage() {
     return (
       <div className="form-container" style={{ maxWidth: '400px', marginTop: '4rem' }}>
         <div className="form-header">
-          <h1>🔒 Admin Access</h1>
+          <h1>Admin Access</h1>
           <p>Enter the lab assistant password to continue.</p>
         </div>
         <div className="form-group">
@@ -122,7 +122,7 @@ export default function AdminPage() {
   return (
     <div className="admin-container">
       <div className="admin-header">
-        <h1>🖨️ Admin Dashboard</h1>
+        <h1>Admin Dashboard</h1>
         <p>{requests.length} active requests · {archivedRequests.length} archived</p>
       </div>
 
@@ -182,10 +182,10 @@ export default function AdminPage() {
               <p style={{ fontSize: '0.85rem', color: '#BDBDBD' }}>📧 {req.email}</p>
               <p className="request-description">{req.description}</p>
               <div className="request-details">
-                <span>📐 {req.print_size}</span>
-                <span>📅 {req.requested_date}</span>
-                <span>🕐 {new Date(req.created_at).toLocaleString()}</span>
-                <span>📁 {req.file_name}</span>
+                <span>{req.print_size}</span>
+                <span>{req.requested_date}</span>
+                <span>{new Date(req.created_at).toLocaleString()}</span>
+                <span>{req.file_name}</span>
               </div>
             </div>
 

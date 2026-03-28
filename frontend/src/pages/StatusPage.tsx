@@ -91,7 +91,7 @@ export default function StatusPage() {
           </div>
           {request.admin_notes && (
             <div className="admin-notes">
-              <strong>📝 Note from Lab Assistant:</strong>
+              <strong>Note from Lab Assistant:</strong>
               <p>{request.admin_notes}</p>
             </div>
           )}

@@ -141,7 +141,7 @@ export default function SubmitPage() {
             onChange={(e) => setPrintSize(e.target.value)}
             required
           />
-          <span className="field-hint">Format: LengthxWidthxHeight in inches. Maximum size is 8x8x8.</span>
+          <span className="field-hint">Format: LxWxH (inches). Maximum size is 8x8x8.</span>
         </div>
 
         <div className="form-group">
