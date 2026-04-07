@@ -210,7 +210,7 @@ export default function AdminPage() {
                     Complete
                   </button>
                   <button className="btn-deny" onClick={() => handleStatusUpdate(req, 'denied')} disabled={updating === req.id || req.status === 'denied'}>
-                    ✕ Deny
+                    Deny
                   </button>
                   <button
                     style={{ background: 'rgba(100,100,100,0.15)', color: '#BDBDBD', border: '1px solid #3a3a3a', borderRadius: '8px', padding: '0.5rem 1rem', cursor: 'pointer', fontFamily: 'var(--font-body)', fontSize: '0.85rem', fontWeight: '700' }}
