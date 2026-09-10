@@ -18,7 +18,9 @@ export default function SubmitPage() {
   const validateSize = (size: string) => {
     const parts = size.split('x').map(Number);
     if (parts.length !== 3 || parts.some(isNaN)) return false;
-    return parts.every(p => p > 0 && p <= 8);
+    return parts[0] > 0 && parts[0] <= 31.5
+      && parts[1] > 0 && parts[1] <= 31.5
+      && parts[2] > 0 && parts[2] <= 39.4;
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -31,7 +33,7 @@ export default function SubmitPage() {
     }
 
     if (!validateSize(printSize)) {
-      setError('Invalid print size. Use format LxWxH (e.g. 4x4x4). Max size is 8x8x8.');
+      setError('Invalid print size. Use format LxWxH (e.g. 10x10x10). Max size is 31.5x31.5x39.4.');
       return;
     }
 
@@ -132,7 +134,7 @@ export default function SubmitPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="printSize">Print Size (Max 8x8x8 inches)</label>
+          <label htmlFor="printSize">Print Size (Max 31.5x31.5x39.4 inches)</label>
           <input
             id="printSize"
             type="text"
@@ -141,7 +143,7 @@ export default function SubmitPage() {
             onChange={(e) => setPrintSize(e.target.value)}
             required
           />
-          <span className="field-hint">Format: LxWxH (inches). Maximum size is 8x8x8.</span>
+          <span className="field-hint">Format: LxWxH (inches). Maximum size is 31.5x31.5x39.4.</span>
         </div>
 
         <div className="form-group">

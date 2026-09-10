@@ -179,7 +179,7 @@ export default function AdminPage() {
 
             <div className="request-body">
               <h3>{req.student_name}</h3>
-              <p style={{ fontSize: '0.85rem', color: '#BDBDBD' }}>📧 {req.email}</p>
+              <p style={{ fontSize: '0.85rem', color: '#BDBDBD' }}>Email: {req.email}</p>
               <p className="request-description">{req.description}</p>
               <div className="request-details">
                 <span>{req.print_size}</span>
