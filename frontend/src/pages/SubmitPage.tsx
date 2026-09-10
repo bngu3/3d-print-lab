@@ -134,7 +134,7 @@ export default function SubmitPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="printSize">Print Size (Max 31.5x31.5x39.4 inches)</label>
+          <label htmlFor="printSize">Print Size (Max 31.5 x 31.5 x 39.4 inches)</label>
           <input
             id="printSize"
             type="text"
@@ -143,7 +143,7 @@ export default function SubmitPage() {
             onChange={(e) => setPrintSize(e.target.value)}
             required
           />
-          <span className="field-hint">Format: LxWxH (inches). Maximum size is 31.5x31.5x39.4.</span>
+          <span className="field-hint">Format: LxWxH (inches). Maximum size is 31.5 x 31.5 x 39.4.</span>
         </div>
 
         <div className="form-group">
