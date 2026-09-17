@@ -6,6 +6,13 @@ const { sendConfirmationEmail } = require('../email');
 
 const router = express.Router();
 const PRIORITY_MAP = { class: 1, project: 2, personal: 3 };
+const MAX_PRINT_SIZE = [31.5, 31.5, 39.4];
+
+function isValidPrintSize(size) {
+  const parts = size.split('x').map(Number);
+  return parts.length === 3
+    && parts.every((part, index) => Number.isFinite(part) && part > 0 && part <= MAX_PRINT_SIZE[index]);
+}
 
 function generateCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -21,6 +28,8 @@ router.post('/', upload.single('file'), async (req, res) => {
   const { student_name, email, requested_date, description, print_size, request_type } = req.body;
   if (!student_name || !email || !requested_date || !description || !print_size || !request_type)
     return res.status(400).json({ error: 'All fields are required.' });
+  if (!isValidPrintSize(print_size))
+    return res.status(400).json({ error: 'Invalid print size. Maximum size is 31.5x31.5x39.4.' });
   const priority = PRIORITY_MAP[request_type];
   const request_code = generateCode();
   try {
