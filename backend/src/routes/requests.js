@@ -1,6 +1,7 @@
 const express = require('express');
 const pool = require('../db/database');
 const { upload } = require('../middleware/upload');
+const { requireAdmin } = require('../middleware/auth');
 const { sendConfirmationEmail } = require('../email');
 
 const router = express.Router();
@@ -43,7 +44,7 @@ router.post('/', upload.single('file'), async (req, res) => {
   }
 });
 
-router.get('/', async (_req, res) => {
+router.get('/', requireAdmin, async (_req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, request_code, student_name, email, requested_date, description, print_size, request_type, priority, status, file_name, admin_notes, archived, created_at FROM print_requests WHERE archived = FALSE ORDER BY priority ASC, created_at ASC'
@@ -54,7 +55,7 @@ router.get('/', async (_req, res) => {
   }
 });
 
-router.get('/archived', async (_req, res) => {
+router.get('/archived', requireAdmin, async (_req, res) => {
   try {
     const result = await pool.query(
       'SELECT id, request_code, student_name, email, requested_date, description, print_size, request_type, priority, status, file_name, admin_notes, archived, created_at FROM print_requests WHERE archived = TRUE ORDER BY created_at DESC'
@@ -79,7 +80,7 @@ router.get('/:code', async (req, res) => {
   }
 });
 
-router.patch('/:code/status', async (req, res) => {
+router.patch('/:code/status', requireAdmin, async (req, res) => {
   const { status, admin_notes } = req.body;
   const validStatuses = ['pending', 'approved', 'denied', 'completed'];
   if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status.' });
@@ -94,7 +95,7 @@ router.patch('/:code/status', async (req, res) => {
   }
 });
 
-router.patch('/:code/archive', async (req, res) => {
+router.patch('/:code/archive', requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
       'UPDATE print_requests SET archived = TRUE WHERE request_code = $1 RETURNING *',
@@ -107,7 +108,7 @@ router.patch('/:code/archive', async (req, res) => {
   }
 });
 
-router.get('/:code/download', async (req, res) => {
+router.get('/:code/download', requireAdmin, async (req, res) => {
   try {
     const result = await pool.query(
       'SELECT file_name, file_data FROM print_requests WHERE request_code = $1',

@@ -2,6 +2,17 @@ import type { PrintRequest } from '../types';
 
 const BASE_URL = 'https://3d-print-lab-production.up.railway.app/api';
 
+export async function loginAdmin(password: string): Promise<void> {
+  const res = await fetch(`${BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Admin login failed.');
+}
+
 export async function submitRequest(formData: FormData): Promise<PrintRequest> {
   const res = await fetch(`${BASE_URL}/requests`, {
     method: 'POST',
@@ -20,14 +31,14 @@ export async function getRequestByCode(code: string): Promise<PrintRequest> {
 }
 
 export async function getAllRequests(): Promise<PrintRequest[]> {
-  const res = await fetch(`${BASE_URL}/requests`);
+  const res = await fetch(`${BASE_URL}/requests`, { credentials: 'include' });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Failed to fetch requests.');
   return data;
 }
 
 export async function getArchivedRequests(): Promise<PrintRequest[]> {
-  const res = await fetch(`${BASE_URL}/requests/archived`);
+  const res = await fetch(`${BASE_URL}/requests/archived`, { credentials: 'include' });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Failed to fetch archived requests.');
   return data;
@@ -41,6 +52,7 @@ export async function updateRequestStatus(
   const res = await fetch(`${BASE_URL}/requests/${code}/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ status, admin_notes }),
   });
   const data = await res.json();
@@ -51,6 +63,7 @@ export async function updateRequestStatus(
 export async function archiveRequest(code: string): Promise<PrintRequest> {
   const res = await fetch(`${BASE_URL}/requests/${code}/archive`, {
     method: 'PATCH',
+    credentials: 'include',
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Failed to archive request.');

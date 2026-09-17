@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, getDownloadUrl } from '../api/requests';
+import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, getDownloadUrl, loginAdmin } from '../api/requests';
 import type { PrintRequest } from '../types';
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
-
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
 const PRIORITY_COLORS: Record<string, string> = {
   class: '#ef4444',
@@ -31,11 +29,13 @@ export default function AdminPage() {
   const [noteInputs, setNoteInputs] = useState<Record<string, string>>({});
   const [updating, setUpdating] = useState<number | null>(null);
 
-  const handleLogin = () => {
-    if (passwordInput === ADMIN_PASSWORD) {
+  const handleLogin = async () => {
+    setPasswordError('');
+    try {
+      await loginAdmin(passwordInput);
       setAuthenticated(true);
-    } else {
-      setPasswordError('Incorrect password.');
+    } catch (err: unknown) {
+      setPasswordError(err instanceof Error ? err.message : 'Login failed.');
     }
   };
 
