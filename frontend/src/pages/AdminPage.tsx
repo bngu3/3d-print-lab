@@ -18,6 +18,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [requests, setRequests] = useState<PrintRequest[]>([]);
@@ -32,7 +33,7 @@ export default function AdminPage() {
   const handleLogin = async () => {
     setPasswordError('');
     try {
-      await loginAdmin(passwordInput);
+      await loginAdmin(emailInput, passwordInput);
       setAuthenticated(true);
     } catch (err: unknown) {
       setPasswordError(err instanceof Error ? err.message : 'Login failed.');
@@ -92,8 +93,18 @@ export default function AdminPage() {
     return (
       <div className="form-container" style={{ maxWidth: '400px', marginTop: '4rem' }}>
         <div className="form-header">
-          <h1>Admin Access</h1>
-          <p>Enter the lab assistant password to continue.</p>
+          <h1>Staff Access</h1>
+          <p>Enter your email and password to continue.</p>
+        </div>
+        <div className="form-group">
+          <label>Email</label>
+          <input
+            type="email"
+            placeholder="name@school.edu"
+            value={emailInput}
+            onChange={(e) => setEmailInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+          />
         </div>
         <div className="form-group">
           <label>Password</label>

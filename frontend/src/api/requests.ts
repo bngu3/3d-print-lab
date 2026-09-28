@@ -2,12 +2,12 @@ import type { PrintRequest } from '../types';
 
 const BASE_URL = 'https://3d-print-lab-production.up.railway.app/api';
 
-export async function loginAdmin(password: string): Promise<void> {
+export async function loginAdmin(email: string, password: string): Promise<void> {
   const res = await fetch(`${BASE_URL}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     credentials: 'include',
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ email, password }),
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Admin login failed.');

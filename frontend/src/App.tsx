@@ -20,9 +20,6 @@ export default function App() {
             <NavLink to="/status" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Check Status
             </NavLink>
-            <NavLink to="/admin" className={({ isActive }) => isActive ? 'nav-link active admin-link' : 'nav-link admin-link'}>
-              Admin
-            </NavLink>
           </div>
         </nav>
 
