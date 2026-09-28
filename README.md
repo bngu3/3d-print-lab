@@ -1,43 +1,78 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SJSU FabLab 3D Print Lab
 
-## Getting Started
-This is a full stack web application for managing 3D print requests for the SJSU FabLab club :D
+Full-stack request management application for the SJSU FabLab.
 
-To start, clone the repo:
-```
-git clone https://github.com/bngu3/3d-print-lab.git
-cd 3d-print-lab
-```
+## Project Structure
 
-Now, to run the development server:
+- `frontend/`: React and Vite application
+- `backend/`: Express API and PostgreSQL database access
+
+## Local Development
+
+Install dependencies:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cd backend
+npm install
+
+cd ../frontend
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Configure the backend environment in `backend/.env`:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+DATABASE_URL=your-postgresql-connection-string
+SESSION_SECRET=your-long-random-session-secret
+FRONTEND_URL=http://localhost:5173
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Start the backend:
 
-## Learn More
+```bash
+cd backend
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the frontend in a second terminal:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+cd frontend
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The frontend runs at `http://localhost:5173` and the API runs at `http://localhost:3001`.
 
-## Deploy on Vercel
+## Staff Access
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The staff dashboard is available at `/admin`, but it is intentionally hidden from the public navigation. Staff sign in with an individual email and password.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `technician`: can view and update requests
+- `admin`: can also archive and permanently delete requests
+
+Staff accounts are stored in PostgreSQL. Passwords must be stored as bcrypt hashes, never as plaintext. Create or deactivate staff accounts through the PostgreSQL console until a protected staff-management screen is added.
+
+Example account insert:
+
+```sql
+INSERT INTO users (email, password_hash, role_id, is_active)
+VALUES (
+  'staff@sjsu.edu',
+  '<bcrypt-hash>',
+  (SELECT id FROM roles WHERE name = 'technician'),
+  TRUE
+);
+```
+
+Do not commit `.env` files, database connection strings, session secrets, plaintext passwords, or bcrypt hashes to the repository.
+
+## Production
+
+The backend requires `DATABASE_URL`, `SESSION_SECRET`, and `FRONTEND_URL` in its hosting environment. Configure the frontend and backend deployments separately, then verify the frontend API URL in `frontend/src/api/requests.ts` points to the production backend.
+
+Before deploying changes:
+
+```bash
+cd frontend
+npm run build
+```
