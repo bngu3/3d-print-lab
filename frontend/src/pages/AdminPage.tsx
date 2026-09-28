@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, getDownloadUrl, loginAdmin } from '../api/requests';
+import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, deleteRequest, getDownloadUrl, loginAdmin } from '../api/requests';
 import type { PrintRequest } from '../types';
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
 
@@ -86,6 +86,19 @@ export default function AdminPage() {
       fetchArchived();
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Archive failed.');
+    }
+  };
+
+  const handleDelete = async (req: PrintRequest) => {
+    const confirmed = window.confirm(`Are you sure you want to permanently delete request ${req.request_code}? This cannot be undone.`);
+    if (!confirmed) return;
+
+    try {
+      await deleteRequest(req.request_code);
+      setRequests((prev) => prev.filter((item) => item.id !== req.id));
+      setArchivedRequests((prev) => prev.filter((item) => item.id !== req.id));
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Delete failed.');
     }
   };
 
@@ -229,6 +242,9 @@ export default function AdminPage() {
                   >
                     Archive
                   </button>
+                  <button className="btn-deny" onClick={() => handleDelete(req)}>
+                    Delete
+                  </button>
                 </div>
               </div>
             )}
@@ -241,6 +257,9 @@ export default function AdminPage() {
                 {req.admin_notes && (
                   <p style={{ fontSize: '0.85rem', color: '#BDBDBD', padding: '0.5rem 0' }}>📝 {req.admin_notes}</p>
                 )}
+                <button className="btn-deny" onClick={() => handleDelete(req)}>
+                  Delete
+                </button>
               </div>
             )}
           </div>

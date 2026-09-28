@@ -70,6 +70,15 @@ export async function archiveRequest(code: string): Promise<PrintRequest> {
   return data.request;
 }
 
+export async function deleteRequest(code: string): Promise<void> {
+  const res = await fetch(`${BASE_URL}/requests/${code}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Failed to delete request.');
+}
+
 export function getDownloadUrl(code: string): string {
   return `${BASE_URL}/requests/${code}/download`;
 }

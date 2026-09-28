@@ -117,6 +117,19 @@ router.patch('/:code/archive', requireAdmin, async (req, res) => {
   }
 });
 
+router.delete('/:code', requireAdmin, async (req, res) => {
+  try {
+    const result = await pool.query(
+      'DELETE FROM print_requests WHERE request_code = $1 RETURNING id, request_code',
+      [req.params.code.toUpperCase()]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Request not found.' });
+    res.json({ message: 'Request deleted.', request: result.rows[0] });
+  } catch (err) {
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+
 router.get('/:code/download', requireTechnician, async (req, res) => {
   try {
     const result = await pool.query(
