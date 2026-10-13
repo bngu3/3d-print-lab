@@ -1,5 +1,5 @@
 export type RequestType = 'class' | 'project' | 'personal';
-export type RequestStatus = 'pending' | 'approved' | 'denied' | 'completed';
+export type RequestStatus = 'pending' | 'approved' | 'printing' | 'denied' | 'completed';
 
 export interface PrintRequest {
   id: number;
@@ -27,6 +27,7 @@ export const REQUEST_TYPE_LABELS: Record<RequestType, string> = {
 export const STATUS_LABELS: Record<RequestStatus, string> = {
   pending: 'Pending',
   approved: 'Approved',
+  printing: 'Printing',
   denied: 'Denied',
   completed: 'Completed',
 };

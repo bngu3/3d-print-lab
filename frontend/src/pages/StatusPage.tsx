@@ -6,9 +6,12 @@ import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
 const STATUS_COLORS: Record<string, string> = {
   pending: '#f59e0b',
   approved: '#10b981',
+  printing: '#2D9CDB',
   denied: '#ef4444',
   completed: '#6366f1',
 };
+
+const STATUS_STEPS = ['pending', 'approved', 'printing', 'completed'] as const;
 
 export default function StatusPage() {
   const [requestCode, setRequestCode] = useState('');
@@ -80,6 +83,25 @@ export default function StatusPage() {
             {STATUS_LABELS[request.status]}
           </div>
           <h2>Request {request.request_code}</h2>
+          {request.status !== 'denied' && (
+            <div className="status-timeline" aria-label={`Request status: ${STATUS_LABELS[request.status]}`}>
+              {STATUS_STEPS.map((step, index) => {
+                const currentIndex = STATUS_STEPS.indexOf(request.status as typeof STATUS_STEPS[number]);
+                const isComplete = index < currentIndex;
+                const isCurrent = step === request.status;
+                return (
+                  <div
+                    className={`timeline-step${isCurrent ? ' current' : ''}${isComplete ? ' complete' : ''}`}
+                    key={step}
+                    aria-current={isCurrent ? 'step' : undefined}
+                  >
+                    <span className="timeline-marker" aria-hidden="true">{isComplete ? '✓' : index + 1}</span>
+                    <span className="timeline-label">{STATUS_LABELS[step]}</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
           <div className="info-block">
             <p><span>Student:</span> {request.student_name}</p>
             <p><span>Type:</span> {REQUEST_TYPE_LABELS[request.request_type]}</p>

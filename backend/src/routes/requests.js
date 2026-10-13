@@ -91,7 +91,7 @@ router.get('/:code', async (req, res) => {
 
 router.patch('/:code/status', requireTechnician, async (req, res) => {
   const { status, admin_notes } = req.body;
-  const validStatuses = ['pending', 'approved', 'denied', 'completed'];
+  const validStatuses = ['pending', 'approved', 'printing', 'denied', 'completed'];
   if (!validStatuses.includes(status)) return res.status(400).json({ error: 'Invalid status.' });
   try {
     const result = await pool.query(

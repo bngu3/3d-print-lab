@@ -12,6 +12,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
   pending: '#f59e0b',
   approved: '#10b981',
+  printing: '#2D9CDB',
   denied: '#ef4444',
   completed: '#6366f1',
 };
@@ -26,6 +27,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [filterStatus, setFilterStatus] = useState<string>('all');
+  const [filterType, setFilterType] = useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOrder, setSortOrder] = useState<'priority' | 'requested_date' | 'created_at'>('priority');
   const [showArchived, setShowArchived] = useState(false);
   const [noteInputs, setNoteInputs] = useState<Record<string, string>>({});
   const [updating, setUpdating] = useState<number | null>(null);
@@ -137,9 +141,22 @@ export default function AdminPage() {
     );
   }
 
-  const filtered = filterStatus === 'all'
-    ? requests
-    : requests.filter((r) => r.status === filterStatus);
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filtered = requests
+    .filter((request) => filterStatus === 'all' || request.status === filterStatus)
+    .filter((request) => filterType === 'all' || request.request_type === filterType)
+    .filter((request) => !normalizedQuery || [
+      request.request_code,
+      request.student_name,
+      request.email,
+      request.file_name,
+      request.description,
+    ].some((value) => value.toLowerCase().includes(normalizedQuery)))
+    .sort((first, second) => {
+      if (sortOrder === 'priority') return first.priority - second.priority || first.created_at.localeCompare(second.created_at);
+      if (sortOrder === 'requested_date') return first.requested_date.localeCompare(second.requested_date);
+      return second.created_at.localeCompare(first.created_at);
+    });
 
   const displayList = showArchived ? archivedRequests : filtered;
 
@@ -166,13 +183,33 @@ export default function AdminPage() {
 
         {!showArchived && (
           <>
+            <input
+              className="admin-search"
+              type="search"
+              placeholder="Search requests..."
+              aria-label="Search requests"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
             <label>Filter:</label>
             <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
               <option value="all">All</option>
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
+              <option value="printing">Printing</option>
               <option value="denied">Denied</option>
               <option value="completed">Completed</option>
+            </select>
+            <select value={filterType} onChange={(e) => setFilterType(e.target.value)} aria-label="Filter by request type">
+              <option value="all">All types</option>
+              <option value="class">Class-related</option>
+              <option value="project">Project-based</option>
+              <option value="personal">Personal</option>
+            </select>
+            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)} aria-label="Sort requests">
+              <option value="priority">Sort: Priority</option>
+              <option value="requested_date">Sort: Requested date</option>
+              <option value="created_at">Sort: Newest</option>
             </select>
           </>
         )}
@@ -229,6 +266,9 @@ export default function AdminPage() {
                 <div className="action-buttons">
                   <button className="btn-approve" onClick={() => handleStatusUpdate(req, 'approved')} disabled={updating === req.id || req.status === 'approved'}>
                     Approve
+                  </button>
+                  <button className="btn-complete" onClick={() => handleStatusUpdate(req, 'printing')} disabled={updating === req.id || req.status === 'printing'}>
+                    Start Printing
                   </button>
                   <button className="btn-complete" onClick={() => handleStatusUpdate(req, 'completed')} disabled={updating === req.id || req.status === 'completed'}>
                     Complete

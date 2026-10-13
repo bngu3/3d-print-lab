@@ -251,6 +251,55 @@ body {
 
 .status-card h2 { font-size: 1.4rem; font-weight: 800; margin: 1rem 0 0.75rem; }
 
+.status-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin: 1.5rem 0;
+}
+
+.timeline-step {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--text-muted);
+  text-align: center;
+  font-size: 0.78rem;
+}
+
+.timeline-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: calc(50% + 18px);
+  width: calc(100% - 36px);
+  height: 2px;
+  background: var(--border);
+}
+
+.timeline-marker {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.timeline-step.complete,
+.timeline-step.current { color: var(--text); }
+.timeline-step.complete .timeline-marker,
+.timeline-step.current .timeline-marker { border-color: var(--accent); color: var(--accent); }
+.timeline-step.complete:not(:last-child)::after { background: var(--accent); }
+.timeline-step.current .timeline-marker { background: rgba(245, 130, 32, 0.15); }
+
 .status-badge {
   display: inline-block;
   padding: 0.35rem 1rem;
@@ -291,6 +340,21 @@ body {
 }
 
 .admin-toolbar label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
+
+.admin-search {
+  flex: 1 1 180px;
+  min-width: 150px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-family: var(--font-body);
+  padding: 0.4rem 0.75rem;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.admin-search:focus { border-color: var(--accent); }
 
 .admin-toolbar select {
   background: var(--surface2);
@@ -448,4 +512,10 @@ body {
     padding: 0.4rem 0.6rem;
     font-size: 0.8rem;
   }
+
+  .admin-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .admin-toolbar label { align-self: center; }
+  .admin-toolbar select, .admin-search { flex: 1 1 140px; }
+  .status-timeline { gap: 0.15rem; }
+  .timeline-step { font-size: 0.7rem; }
 }
