@@ -13,6 +13,15 @@ export async function loginAdmin(email: string, password: string): Promise<void>
   if (!res.ok) throw new Error(data.error || 'Admin login failed.');
 }
 
+export async function logoutAdmin(): Promise<void> {
+  const res = await fetch(`${BASE_URL}/auth/logout`, {
+    method: 'POST',
+    credentials: 'include',
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Logout failed.');
+}
+
 export async function submitRequest(formData: FormData): Promise<PrintRequest> {
   const res = await fetch(`${BASE_URL}/requests`, {
     method: 'POST',

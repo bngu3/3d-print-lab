@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, deleteRequest, getDownloadUrl, loginAdmin } from '../api/requests';
+import { getAllRequests, getArchivedRequests, updateRequestStatus, archiveRequest, deleteRequest, getDownloadUrl, loginAdmin, logoutAdmin } from '../api/requests';
 import type { PrintRequest } from '../types';
 import { REQUEST_TYPE_LABELS, STATUS_LABELS } from '../types';
 
@@ -42,6 +42,21 @@ export default function AdminPage() {
     } catch (err: unknown) {
       setPasswordError(err instanceof Error ? err.message : 'Login failed.');
     }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logoutAdmin();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Logout failed.');
+      return;
+    }
+
+    setAuthenticated(false);
+    setRequests([]);
+    setArchivedRequests([]);
+    setPasswordInput('');
+    setError('');
   };
 
   const fetchRequests = async () => {
@@ -163,8 +178,11 @@ export default function AdminPage() {
   return (
     <div className="admin-container">
       <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <p>{requests.length} active requests · {archivedRequests.length} archived</p>
+        <div>
+          <h1>Staff Dashboard</h1>
+          <p>{requests.length} active requests · {archivedRequests.length} archived</p>
+        </div>
+        <button className="btn-secondary staff-logout" onClick={handleLogout}>Log out</button>
       </div>
 
       <div className="admin-toolbar">

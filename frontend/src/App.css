@@ -340,9 +340,10 @@ body {
 
 .admin-container { max-width: 900px; margin: 0 auto; }
 
-.admin-header { margin-bottom: 1.5rem; }
+.admin-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
 .admin-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
 .admin-header p { color: var(--text-muted); }
+.staff-logout { flex-shrink: 0; }
 
 .admin-toolbar {
   display: flex;
@@ -535,6 +536,8 @@ body {
   }
 
   .admin-toolbar { align-items: stretch; }
+  .admin-header { align-items: stretch; flex-direction: column; }
+  .staff-logout { width: 100%; }
   .admin-toolbar label { align-self: center; }
   .admin-toolbar select, .admin-search { flex: 1 1 140px; max-width: none; }
   .status-timeline { gap: 0.15rem; }
