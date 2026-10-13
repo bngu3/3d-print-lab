@@ -25,7 +25,16 @@ Configure the backend environment in `backend/.env`:
 DATABASE_URL=your-postgresql-connection-string
 SESSION_SECRET=your-long-random-session-secret
 FRONTEND_URL=http://localhost:5173
+RESEND_API_KEY=your-resend-api-key
+EMAIL_FROM=FabLab <prints@your-verified-domain.edu>
+LAB_EMAIL=your-lab-email@sjsu.edu
 ```
+
+Student notifications are sent through Resend. Students do not need to be on the
+SJSU domain, but the sender domain must be verified in Resend. For production,
+use an approved SJSU sender address or the university SMTP/email service if
+SJSU blocks messages from external senders. The Resend `onboarding@resend.dev`
+sender is intended for testing and may only deliver to the Resend account email.
 
 Start the backend:
 
