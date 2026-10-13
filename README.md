@@ -54,7 +54,7 @@ The frontend runs at `http://localhost:5173` and the API runs at `http://localho
 
 ## Staff Access
 
-The staff dashboard is available at `/admin`, but it is intentionally hidden from the public navigation. Staff sign in with an individual email and password.
+The staff dashboard is available at `/staff`, but it is intentionally hidden from the public navigation. Staff sign in with an individual email and password.
 
 - `technician`: can view and update requests
 - `admin`: can also archive and permanently delete requests

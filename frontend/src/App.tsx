@@ -27,7 +27,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<SubmitPage />} />
             <Route path="/status" element={<StatusPage />} />
-            <Route path="/admin" element={<AdminPage />} />
+            <Route path="/staff" element={<AdminPage />} />
           </Routes>
         </main>
 
