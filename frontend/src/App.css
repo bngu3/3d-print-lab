@@ -91,7 +91,20 @@ body {
 .form-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -1px; }
 .form-header p { color: var(--text-muted); margin-top: 0.4rem; }
 
+.form-steps { display: flex; gap: 1rem; margin-top: 1.5rem; color: var(--text-muted); font-size: 0.8rem; }
+.form-step { display: inline-flex; align-items: center; gap: 0.4rem; }
+.form-step strong { color: var(--border); font-family: var(--font-mono); }
+.form-step.active { color: var(--text); }
+.form-step.active strong { color: var(--accent); }
+
 .print-form { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.form-section { display: flex; flex-direction: column; gap: 1.25rem; padding: 1.5rem; background: rgba(42, 42, 42, 0.55); border: 1px solid var(--border); border-radius: 14px; }
+.section-heading { display: flex; gap: 0.85rem; align-items: flex-start; }
+.section-number { color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; padding-top: 0.15rem; }
+.section-heading h2 { font-size: 1rem; font-weight: 800; }
+.section-heading p { color: var(--text-muted); font-size: 0.82rem; margin-top: 0.15rem; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
 .form-group { display: flex; flex-direction: column; gap: 0.5rem; }
 .form-group label { font-weight: 600; font-size: 0.9rem; color: var(--text); }
@@ -130,7 +143,10 @@ body {
 
 .file-upload-area:hover { border-color: var(--accent); }
 .file-upload-area input[type="file"] { color: var(--text-muted); font-size: 0.9rem; width: 100%; }
-.file-selected { margin-top: 0.5rem; font-size: 0.85rem; color: var(--accent); font-family: var(--font-mono); }
+.upload-hint { display: block; margin-top: 0.5rem; color: var(--text-muted); font-size: 0.78rem; }
+.file-selected { margin-top: 0.75rem; font-size: 0.85rem; color: var(--accent); font-family: var(--font-mono); overflow-wrap: anywhere; }
+.file-selected span { color: var(--text-muted); font-family: var(--font-body); }
+.submit-button { width: 100%; }
 
 .btn-primary {
   background: var(--accent);
@@ -518,4 +534,7 @@ body {
   .admin-toolbar select, .admin-search { flex: 1 1 140px; }
   .status-timeline { gap: 0.15rem; }
   .timeline-step { font-size: 0.7rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-section { padding: 1.15rem; }
+  .form-steps { justify-content: space-between; gap: 0.5rem; }
 }

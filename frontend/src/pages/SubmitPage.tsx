@@ -14,6 +14,7 @@ export default function SubmitPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [submitted, setSubmitted] = useState<PrintRequest | null>(null);
+  const today = new Date().toISOString().split('T')[0];
 
   const validateSize = (size: string) => {
     const parts = size.split('x').map(Number);
@@ -83,6 +84,11 @@ export default function SubmitPage() {
       <div className="form-header">
         <h1>Submit a Print Request</h1>
         <p>Fill out the form below to queue your 3D print job.</p>
+        <div className="form-steps" aria-label="Submission steps">
+          <span className="form-step active"><strong>1</strong> Details</span>
+          <span className="form-step"><strong>2</strong> Upload STL</span>
+          <span className="form-step"><strong>3</strong> Submit</span>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="print-form">
@@ -115,6 +121,7 @@ export default function SubmitPage() {
           <input
             id="requestedDate"
             type="date"
+            min={today}
             value={requestedDate}
             onChange={(e) => setRequestedDate(e.target.value)}
             required
@@ -154,9 +161,9 @@ export default function SubmitPage() {
             onChange={(e) => setRequestType(e.target.value as typeof requestType)}
             required
           >
-            <option value="class"> Class-Related (Highest Priority)</option>
-            <option value="project"> Project-Based</option>
-            <option value="personal"> Personal (Lowest Priority)</option>
+            <option value="class">Class-related</option>
+            <option value="project">Project-based</option>
+            <option value="personal">Personal</option>
           </select>
           <span className="field-hint">Class-related requests are always prioritized first!</span>
         </div>
@@ -171,6 +178,7 @@ export default function SubmitPage() {
               onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               required
             />
+            <span className="upload-hint">STL format · Maximum 100 MB</span>
             {file && <p className="file-selected">📎 {file.name}</p>}
           </div>
         </div>
