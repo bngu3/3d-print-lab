@@ -346,6 +346,7 @@ body {
 
 .admin-toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -358,8 +359,9 @@ body {
 .admin-toolbar label { font-size: 0.9rem; color: var(--text-muted); font-weight: 600; }
 
 .admin-search {
-  flex: 1 1 180px;
-  min-width: 150px;
+  flex: 1 1 220px;
+  min-width: 0;
+  max-width: 280px;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -373,6 +375,9 @@ body {
 .admin-search:focus { border-color: var(--accent); }
 
 .admin-toolbar select {
+  flex: 1 1 150px;
+  min-width: 0;
+  max-width: 220px;
   background: var(--surface2);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -529,9 +534,9 @@ body {
     font-size: 0.8rem;
   }
 
-  .admin-toolbar { align-items: stretch; flex-wrap: wrap; }
+  .admin-toolbar { align-items: stretch; }
   .admin-toolbar label { align-self: center; }
-  .admin-toolbar select, .admin-search { flex: 1 1 140px; }
+  .admin-toolbar select, .admin-search { flex: 1 1 140px; max-width: none; }
   .status-timeline { gap: 0.15rem; }
   .timeline-step { font-size: 0.7rem; }
   .form-grid { grid-template-columns: 1fr; }
